@@ -11,7 +11,7 @@ load(file_datos);
 % Reemplazo de variable isi (en milisegundos) por ts
 ts = isi/1000; clear isi;clear isi_units;
 
-%% .......... Armado de datos
+% .......... Armado de datos
 
 close all; clc;
 fprintf('* ................. Archivo seleccionado ................. *\n')
@@ -52,7 +52,8 @@ Modulo_dB = Modulo_dB (1:floor(N/2));
 
 % ..................... Graficas de Seniales ...................
 
-figure('NumberTitle','off','Name','Señales');
+figura_tempo = figure('NumberTitle','off','Name',...
+    strcat('Seniales ',filename));
 
 subplot(2,2,1)
 plot(vector_temp, data_voz);
@@ -82,7 +83,8 @@ ylabel('Amplitud')
 
 extremo_x = 100;
 
-figure('NumberTitle','off','Name','FFTs');
+figura_fft = figure('NumberTitle','off','Name',...
+    strcat('FFTs ',filename));
 
 subplot(2,2,1)
 plot(vector_frec, Modulo_voz);
@@ -112,15 +114,20 @@ xlabel('Frecuencia [Hz]')
 ylabel('Amplitud')
 % xlim([0 extremo_x])
 
+% ===========================
+% Guardado de figuras de las ffts de las seniales juntos con los valores
+% temporales de las seniales
+
+savefig(figura_fft,replace(filename,'.mat','_fft.fig'))
+savefig(figura_tempo,replace(filename,'.mat','_senial.fig'))
 
 %% ............ Guardado de audio 
 
 % Pide una direccion donde guardar el archivo de audio. Luego guarda el
 % archivo de audio con el nombre que tenia el archivo .mat
 
-folder_name = uigetdir;
-audio_guardado = strcat(folder_name,'\',filename);
-audio_guardado = replace(audio_guardado,'.mat','.wav')
-% audiowrite(audio_guardado, data(:,1) , fs)
-
+audiowrite(replace(filename,'.mat','_Voz.wav'), data(:,1) , fs)
+audiowrite(replace(filename,'.mat','_EGG.wav'), data(:,2) , fs)
+audiowrite(replace(filename,'.mat','_VPC.wav'), data(:,3) , fs)
+audiowrite(replace(filename,'.mat','_dB.wav'), data(:,4) , fs)
 
